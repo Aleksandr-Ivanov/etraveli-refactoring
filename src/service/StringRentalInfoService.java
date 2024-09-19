@@ -22,36 +22,40 @@ public class StringRentalInfoService implements RentalInfoService<String> {
     resultBuilder.appendCustomer(customer.getName());
 
     for (MovieRental rental : customer.getRentals()) {
-      double thisAmount = 0;
+      double rentalPrice = 0;
+
       Movie movie = movieDao.get(rental.getMovieId());
       Movie.Code movieCode = movie.getCode();
+      int rentalDays = rental.getDays();
 
       // determine amount for each movie
       switch (movieCode) {
         case REGULAR:
-          thisAmount = 2;
-          if (rental.getDays() > 2) {
-            thisAmount = ((rental.getDays() - 2) * 1.5) + thisAmount;
+          rentalPrice = 2;
+          if (rentalDays > 2) {
+            rentalPrice += ((rentalDays - 2) * 1.5);
           }
           break;
         case NEW:
-          thisAmount = rental.getDays() * 3;
+          rentalPrice = rentalDays * 3;
           break;
         case CHILDREN:
-          thisAmount = 1.5;
-          if (rental.getDays() > 3) {
-            thisAmount = ((rental.getDays() - 3) * 1.5) + thisAmount;
+          rentalPrice = 1.5;
+          if (rentalDays > 3) {
+            rentalPrice += ((rentalDays - 3) * 1.5);
           }
       }
 
       //add frequent bonus points
       frequentEnterPoints++;
       // add bonus for a two day new release rental
-      if (movieCode == Movie.Code.NEW && rental.getDays() > 2) frequentEnterPoints++;
+      if (movieCode == Movie.Code.NEW && rentalDays > 2) {
+        frequentEnterPoints++;
+      }
 
       //print figures for this rental
-      resultBuilder.appendRentalItem(movie.getTitle(), thisAmount);
-      totalAmount = totalAmount + thisAmount;
+      resultBuilder.appendRentalItem(movie.getTitle(), rentalPrice);
+      totalAmount += rentalPrice;
     }
     // add footer lines
     return resultBuilder.appendTotalAmount(totalAmount)
