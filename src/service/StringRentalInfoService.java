@@ -21,33 +21,33 @@ public class StringRentalInfoService implements RentalInfoService<String> {
     StatementBuilder result = new StatementBuilder();
     result.appendCustomer(customer.getName());
 
-    for (MovieRental r : customer.getRentals()) {
+    for (MovieRental rental : customer.getRentals()) {
       double thisAmount = 0;
 
       // determine amount for each movie
-      if (movieDao.get(r.getMovieId()).getCode().equals("regular")) {
+      if (movieDao.get(rental.getMovieId()).getCode().equals("regular")) {
         thisAmount = 2;
-        if (r.getDays() > 2) {
-          thisAmount = ((r.getDays() - 2) * 1.5) + thisAmount;
+        if (rental.getDays() > 2) {
+          thisAmount = ((rental.getDays() - 2) * 1.5) + thisAmount;
         }
       }
-      if (movieDao.get(r.getMovieId()).getCode().equals("new")) {
-        thisAmount = r.getDays() * 3;
+      if (movieDao.get(rental.getMovieId()).getCode().equals("new")) {
+        thisAmount = rental.getDays() * 3;
       }
-      if (movieDao.get(r.getMovieId()).getCode().equals("childrens")) {
+      if (movieDao.get(rental.getMovieId()).getCode().equals("childrens")) {
         thisAmount = 1.5;
-        if (r.getDays() > 3) {
-          thisAmount = ((r.getDays() - 3) * 1.5) + thisAmount;
+        if (rental.getDays() > 3) {
+          thisAmount = ((rental.getDays() - 3) * 1.5) + thisAmount;
         }
       }
 
       //add frequent bonus points
       frequentEnterPoints++;
       // add bonus for a two day new release rental
-      if ("new".equals(movieDao.get(r.getMovieId()).getCode()) && r.getDays() > 2) frequentEnterPoints++;
+      if ("new".equals(movieDao.get(rental.getMovieId()).getCode()) && rental.getDays() > 2) frequentEnterPoints++;
 
       //print figures for this rental
-      result.appendRentalItem(movieDao.get(r.getMovieId()).getTitle(), thisAmount);
+      result.appendRentalItem(movieDao.get(rental.getMovieId()).getTitle(), thisAmount);
       totalAmount = totalAmount + thisAmount;
     }
     // add footer lines
