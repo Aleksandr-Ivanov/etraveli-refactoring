@@ -24,19 +24,19 @@ public class StringRentalInfoService implements RentalInfoService<String> {
     for (MovieRental rental : customer.getRentals()) {
       double thisAmount = 0;
       Movie movie = movieDao.get(rental.getMovieId());
-      String movieCode = movie.getCode();
+      Movie.Code movieCode = movie.getCode();
 
       // determine amount for each movie
-      if (movieCode.equals("regular")) {
+      if (movieCode == Movie.Code.REGULAR) {
         thisAmount = 2;
         if (rental.getDays() > 2) {
           thisAmount = ((rental.getDays() - 2) * 1.5) + thisAmount;
         }
       }
-      if (movieCode.equals("new")) {
+      if (movieCode == Movie.Code.NEW) {
         thisAmount = rental.getDays() * 3;
       }
-      if (movieCode.equals("childrens")) {
+      if (movieCode == Movie.Code.CHILDREN) {
         thisAmount = 1.5;
         if (rental.getDays() > 3) {
           thisAmount = ((rental.getDays() - 3) * 1.5) + thisAmount;
@@ -46,7 +46,7 @@ public class StringRentalInfoService implements RentalInfoService<String> {
       //add frequent bonus points
       frequentEnterPoints++;
       // add bonus for a two day new release rental
-      if ("new".equals(movieCode) && rental.getDays() > 2) frequentEnterPoints++;
+      if (movieCode == Movie.Code.NEW && rental.getDays() > 2) frequentEnterPoints++;
 
       //print figures for this rental
       resultBuilder.appendRentalItem(movie.getTitle(), thisAmount);

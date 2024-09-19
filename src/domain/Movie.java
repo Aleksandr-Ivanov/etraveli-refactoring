@@ -1,10 +1,11 @@
 package domain;
 
 public class Movie {
+  public enum Code {REGULAR, NEW, CHILDREN}
   private String title;
-  private String code;
+  private Code code;
 
-  public Movie(String title, String code) {
+  public Movie(String title, Code code) {
 
     this.title = title;
     this.code = code;
@@ -14,7 +15,7 @@ public class Movie {
     return title;
   }
 
-  public String getCode() {
+  public Code getCode() {
     return code;
   }
 }
