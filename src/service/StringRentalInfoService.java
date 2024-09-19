@@ -27,20 +27,21 @@ public class StringRentalInfoService implements RentalInfoService<String> {
       Movie.Code movieCode = movie.getCode();
 
       // determine amount for each movie
-      if (movieCode == Movie.Code.REGULAR) {
-        thisAmount = 2;
-        if (rental.getDays() > 2) {
-          thisAmount = ((rental.getDays() - 2) * 1.5) + thisAmount;
-        }
-      }
-      if (movieCode == Movie.Code.NEW) {
-        thisAmount = rental.getDays() * 3;
-      }
-      if (movieCode == Movie.Code.CHILDREN) {
-        thisAmount = 1.5;
-        if (rental.getDays() > 3) {
-          thisAmount = ((rental.getDays() - 3) * 1.5) + thisAmount;
-        }
+      switch (movieCode) {
+        case REGULAR:
+          thisAmount = 2;
+          if (rental.getDays() > 2) {
+            thisAmount = ((rental.getDays() - 2) * 1.5) + thisAmount;
+          }
+          break;
+        case NEW:
+          thisAmount = rental.getDays() * 3;
+          break;
+        case CHILDREN:
+          thisAmount = 1.5;
+          if (rental.getDays() > 3) {
+            thisAmount = ((rental.getDays() - 3) * 1.5) + thisAmount;
+          }
       }
 
       //add frequent bonus points
