@@ -18,23 +18,25 @@ public class StringRentalInfoService implements RentalInfoService<String> {
     double totalAmount = 0;
     int frequentEnterPoints = 0;
 
-    StatementBuilder result = new StatementBuilder();
-    result.appendCustomer(customer.getName());
+    StatementBuilder resultBuilder = new StatementBuilder();
+    resultBuilder.appendCustomer(customer.getName());
 
     for (MovieRental rental : customer.getRentals()) {
       double thisAmount = 0;
+      Movie movie = movieDao.get(rental.getMovieId());
+      String movieCode = movie.getCode();
 
       // determine amount for each movie
-      if (movieDao.get(rental.getMovieId()).getCode().equals("regular")) {
+      if (movieCode.equals("regular")) {
         thisAmount = 2;
         if (rental.getDays() > 2) {
           thisAmount = ((rental.getDays() - 2) * 1.5) + thisAmount;
         }
       }
-      if (movieDao.get(rental.getMovieId()).getCode().equals("new")) {
+      if (movieCode.equals("new")) {
         thisAmount = rental.getDays() * 3;
       }
-      if (movieDao.get(rental.getMovieId()).getCode().equals("childrens")) {
+      if (movieCode.equals("childrens")) {
         thisAmount = 1.5;
         if (rental.getDays() > 3) {
           thisAmount = ((rental.getDays() - 3) * 1.5) + thisAmount;
@@ -44,14 +46,14 @@ public class StringRentalInfoService implements RentalInfoService<String> {
       //add frequent bonus points
       frequentEnterPoints++;
       // add bonus for a two day new release rental
-      if ("new".equals(movieDao.get(rental.getMovieId()).getCode()) && rental.getDays() > 2) frequentEnterPoints++;
+      if ("new".equals(movieCode) && rental.getDays() > 2) frequentEnterPoints++;
 
       //print figures for this rental
-      result.appendRentalItem(movieDao.get(rental.getMovieId()).getTitle(), thisAmount);
+      resultBuilder.appendRentalItem(movie.getTitle(), thisAmount);
       totalAmount = totalAmount + thisAmount;
     }
     // add footer lines
-    return result.appendTotalAmount(totalAmount)
+    return resultBuilder.appendTotalAmount(totalAmount)
         .appendFrequentEnterPoints(frequentEnterPoints)
         .build();
   }
