@@ -1,8 +1,6 @@
-import dao.HashMapMovieDao;
 import domain.Customer;
 import domain.MovieRental;
 import service.RentalInfoService;
-import service.StringRentalInfoService;
 
 import java.util.Arrays;
 import java.util.Collections;
