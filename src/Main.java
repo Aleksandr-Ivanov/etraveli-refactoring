@@ -94,7 +94,7 @@ public class Main {
                                      double totalAmount,
                                      int frequentPoints) {
 
-    String resultSlip = new RentalInfo().statement(new Customer(customerName, rentals));
+    String resultSlip = new RentalInfo().formStatement(new Customer(customerName, rentals));
 
     String expectedSlip = formExpectedSlip(customerName, slipItems, totalAmount, frequentPoints);
 
