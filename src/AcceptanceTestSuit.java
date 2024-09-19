@@ -1,6 +1,8 @@
 import dao.HashMapMovieDao;
 import domain.Customer;
 import domain.MovieRental;
+import service.RentalInfoService;
+import service.StringRentalInfoService;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -8,6 +10,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class AcceptanceTestSuit {
+
+  private RentalInfoService<String> rentalInfoService;
+
+  public AcceptanceTestSuit(RentalInfoService<String> rentalInfoService) {
+    this.rentalInfoService = rentalInfoService;
+  }
 
   static class SlipItem {
     String film;
@@ -96,7 +104,7 @@ public class AcceptanceTestSuit {
                               double totalAmount,
                               int frequentPoints) {
 
-    String resultSlip = new RentalInfo(HashMapMovieDao.getInstance()).formStatement(new Customer(customerName, rentals));
+    String resultSlip = rentalInfoService.formStatement(new Customer(customerName, rentals));
 
     String expectedSlip = formExpectedSlip(customerName, slipItems, totalAmount, frequentPoints);
 

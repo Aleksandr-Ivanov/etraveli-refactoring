@@ -1,12 +1,14 @@
+package service;
+
 import dao.Dao;
 import domain.Customer;
 import domain.Movie;
 import domain.MovieRental;
 
-public class RentalInfo {
+public class StringRentalInfoService implements RentalInfoService<String> {
   private final Dao<String, Movie> movieDao;
 
-  public RentalInfo(Dao<String, Movie> movieDao) {
+  public StringRentalInfoService(Dao<String, Movie> movieDao) {
     this.movieDao = movieDao;
   }
 
