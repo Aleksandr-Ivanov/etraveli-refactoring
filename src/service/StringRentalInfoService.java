@@ -5,7 +5,9 @@ import domain.Customer;
 import domain.Movie;
 import domain.MovieRental;
 
-import static java.lang.System.*;
+import java.util.function.ToDoubleBiFunction;
+
+import static java.lang.System.lineSeparator;
 
 public class StringRentalInfoService implements RentalInfoService<String> {
   private final Dao<String, Movie> movieDao;
@@ -28,22 +30,23 @@ public class StringRentalInfoService implements RentalInfoService<String> {
       Movie.Code movieCode = movie.getCode();
       int rentalDays = rental.getDays();
 
+      ToDoubleBiFunction<Integer, Double> extendedRentalCalculator = (basePeriodDays, dailyPrice) -> {
+        if (rentalDays > basePeriodDays) {
+          return (rentalDays - basePeriodDays) * dailyPrice;
+        }
+        return 0.0;
+      };
+
       // determine amount for each movie
       switch (movieCode) {
         case REGULAR:
-          rentalPrice = 2;
-          if (rentalDays > 2) {
-            rentalPrice += ((rentalDays - 2) * 1.5);
-          }
+          rentalPrice = 2 + extendedRentalCalculator.applyAsDouble(2, 1.5);
           break;
         case NEW:
           rentalPrice = rentalDays * 3;
           break;
         case CHILDREN:
-          rentalPrice = 1.5;
-          if (rentalDays > 3) {
-            rentalPrice += ((rentalDays - 3) * 1.5);
-          }
+          rentalPrice = 1.5 + extendedRentalCalculator.applyAsDouble(3, 1.5);
       }
 
       //add frequent bonus points
