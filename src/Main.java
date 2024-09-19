@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,7 +16,15 @@ public class Main {
   }
 
   public static void main(String[] args) {
-    String customerName = "C. U. Stomer";
+    twoRentalsAcceptanceTest();
+    noRentalsAcceptanceTest();
+    singleNewRentalAcceptanceTest();
+    complicatedRentalsAcceptanceTest();
+
+    System.out.println("Success");
+  }
+
+  private static void twoRentalsAcceptanceTest() {
     List<MovieRental> rentals = Arrays.asList(
         new MovieRental("F001", 3),
         new MovieRental("F002", 1)
@@ -24,13 +33,60 @@ public class Main {
         new SlipItem("You've Got Mail", 3.5),
         new SlipItem("Matrix", 2.0)
     );
-    double totalAmount = 5.5;
-    int frequentPoints = 2;
 
-    acceptanceTest(customerName, rentals, slipItems, totalAmount, frequentPoints);
-
-    System.out.println("Success");
+    acceptanceTest(
+        "C. U. Stomer",
+        rentals,
+        slipItems,
+        5.5,
+        2
+    );
   }
+
+  private static void noRentalsAcceptanceTest() {
+    acceptanceTest(
+        "Helen Kroos",
+        Collections.emptyList(),
+        Collections.emptyList(),
+        0.0,
+        0
+    );
+  }
+
+  private static void singleNewRentalAcceptanceTest() {
+    List<MovieRental> rentals = Collections.singletonList(new MovieRental("F004", 5));
+    List<SlipItem> slipItems = Collections.singletonList(new SlipItem("Fast & Furious X", 15.0));
+
+    acceptanceTest(
+        "Clark Smith",
+        rentals,
+        slipItems,
+        15.0,
+        2
+    );
+  }
+
+  private static void complicatedRentalsAcceptanceTest() {
+    List<MovieRental> rentals = Arrays.asList(
+        new MovieRental("F002", 7),
+        new MovieRental("F003", 4),
+        new MovieRental("F004", 2)
+    );
+    List<SlipItem> slipItems = Arrays.asList(
+        new SlipItem("Matrix", 9.5),
+        new SlipItem("Cars", 3.0),
+        new SlipItem("Fast & Furious X", 6)
+    );
+
+    acceptanceTest(
+        "Mary Claire",
+        rentals,
+        slipItems,
+        18.5,
+        3
+    );
+  }
+
 
   private static void acceptanceTest(String customerName,
                                      List<MovieRental> rentals,
