@@ -5,6 +5,8 @@ import domain.Customer;
 import domain.Movie;
 import domain.MovieRental;
 
+import static java.lang.System.*;
+
 public class StringRentalInfoService implements RentalInfoService<String> {
   private final Dao<String, Movie> movieDao;
 
@@ -15,7 +17,10 @@ public class StringRentalInfoService implements RentalInfoService<String> {
   public String formStatement(Customer customer) {
     double totalAmount = 0;
     int frequentEnterPoints = 0;
-    StringBuilder result = new StringBuilder("Rental Record for " + customer.getName() + "\n");
+
+    StatementBuilder result = new StatementBuilder();
+    result.appendCustomer(customer.getName());
+
     for (MovieRental r : customer.getRentals()) {
       double thisAmount = 0;
 
@@ -42,21 +47,56 @@ public class StringRentalInfoService implements RentalInfoService<String> {
       if ("new".equals(movieDao.get(r.getMovieId()).getCode()) && r.getDays() > 2) frequentEnterPoints++;
 
       //print figures for this rental
-      result.append("\t")
-          .append(movieDao.get(r.getMovieId()).getTitle())
-          .append("\t")
-          .append(thisAmount)
-          .append("\n");
+      result.appendRentalItem(movieDao.get(r.getMovieId()).getTitle(), thisAmount);
       totalAmount = totalAmount + thisAmount;
     }
     // add footer lines
-    result.append("Amount owed is ")
-        .append(totalAmount)
-        .append("\n");
-    result.append("You earned ")
-        .append(frequentEnterPoints)
-        .append(" frequent points\n");
+    return result.appendTotalAmount(totalAmount)
+        .appendFrequentEnterPoints(frequentEnterPoints)
+        .build();
+  }
 
-    return result.toString();
+  static class StatementBuilder {
+    private final StringBuilder stringBuilder = new StringBuilder();
+
+    StatementBuilder appendCustomer(String name) {
+      stringBuilder.append("Rental Record for ")
+          .append(name)
+          .append(lineSeparator());
+      return this;
+    }
+
+    StatementBuilder appendRentalItem(String title, double price) {
+      stringBuilder.append("\t")
+          .append(title)
+          .append("\t")
+          .append(String.format("%.2f", price))
+          .append(lineSeparator());
+      return this;
+    }
+
+    StatementBuilder appendTotalAmount(double totalAmount) {
+      stringBuilder.append("Amount owed is ")
+          .append(String.format("%.2f", totalAmount))
+          .append(lineSeparator());
+      return this;
+    }
+
+    StatementBuilder appendFrequentEnterPoints(int frequentEnterPoints) {
+      stringBuilder.append("You earned ")
+          .append(frequentEnterPoints)
+          .append(" frequent points")
+          .append(lineSeparator());
+      return this;
+    }
+
+    public String build() {
+      return this.toString();
+    }
+
+    @Override
+    public String toString() {
+      return stringBuilder.toString();
+    }
   }
 }
