@@ -1,3 +1,7 @@
+import domain.Customer;
+import domain.Movie;
+import domain.MovieRental;
+
 import java.util.HashMap;
 
 public class RentalInfo {

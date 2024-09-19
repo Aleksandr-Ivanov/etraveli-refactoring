@@ -1,3 +1,6 @@
+import domain.Customer;
+import domain.MovieRental;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
