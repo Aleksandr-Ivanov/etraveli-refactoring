@@ -1,4 +1,7 @@
 # Results description from Aleksandr:
+
+Code could be cloned with repo from github and also pull-request was created to show differences history on github web-interface comparing to initial state.
+
 Refactored to follow three-tier backend architecture with service layer containing logic, data access layer to connect to data stores and domain model layer describing business models.
 
 Refactoring is made to Java 8 version bearing in mind, that existing systems could have potentially not the most recent version of sources. Further in the future code could be easily adapted to higher version of Java
