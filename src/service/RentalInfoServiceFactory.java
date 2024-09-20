@@ -2,6 +2,7 @@ package service;
 
 import dao.Dao;
 import domain.Movie;
+import service.calculation.RentalCalculationStrategyFactory;
 
 public class RentalInfoServiceFactory {
   private static final RentalInfoServiceFactory instance = new RentalInfoServiceFactory();
@@ -13,9 +14,9 @@ public class RentalInfoServiceFactory {
     return instance;
   }
 
-   public RentalInfoService<String> getStringRentalService(Dao<String, Movie> dao) {
+   public RentalInfoService<String> getStringRentalService(Dao<String, Movie> dao, RentalCalculationStrategyFactory rentalCalculationStrategyFactory) {
      if (cached == null) {
-       cached = new StringRentalInfoService((dao));
+       cached = new StringRentalInfoService(dao, rentalCalculationStrategyFactory);
      }
      return cached;
    }

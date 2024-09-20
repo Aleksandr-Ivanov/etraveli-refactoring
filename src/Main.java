@@ -3,12 +3,16 @@ import dao.HashMapMovieDao;
 import domain.Movie;
 import service.RentalInfoService;
 import service.RentalInfoServiceFactory;
+import service.calculation.RentalCalculationStrategyFactory;
 
 public class Main {
 
   public static void main(String[] args) {
     Dao<String, Movie> movieDao = HashMapMovieDao.getInstance();
-    RentalInfoService<String> rentalInfoService = RentalInfoServiceFactory.getInstance().getStringRentalService(movieDao);
+
+    RentalCalculationStrategyFactory rentalCalculationStrategyFactory = RentalCalculationStrategyFactory.getInstance();
+
+    RentalInfoService<String> rentalInfoService = RentalInfoServiceFactory.getInstance().getStringRentalService(movieDao, rentalCalculationStrategyFactory);
 
     AcceptanceTestSuit acceptanceTestSuit = new AcceptanceTestSuit(rentalInfoService);
     acceptanceTestSuit.runTests();

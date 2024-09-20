@@ -4,17 +4,22 @@ import dao.Dao;
 import domain.Customer;
 import domain.Movie;
 import domain.MovieRental;
+import service.calculation.RentalCalculationStrategy;
+import service.calculation.RentalCalculationStrategyFactory;
 
 import java.math.BigDecimal;
-import java.util.function.BiFunction;
 
 import static java.lang.System.lineSeparator;
 
 public class StringRentalInfoService implements RentalInfoService<String> {
-  private final Dao<String, Movie> movieDao;
+  public static final int NEW_BONUS_PERIOD_DAYS = 2;
 
-  public StringRentalInfoService(Dao<String, Movie> movieDao) {
+  private final Dao<String, Movie> movieDao;
+  private final RentalCalculationStrategyFactory rentalCalculationStrategyFactory;
+
+  public StringRentalInfoService(Dao<String, Movie> movieDao, RentalCalculationStrategyFactory rentalCalculationStrategyFactory) {
     this.movieDao = movieDao;
+    this.rentalCalculationStrategyFactory = rentalCalculationStrategyFactory;
   }
 
   public String formStatement(Customer customer) {
@@ -29,34 +34,14 @@ public class StringRentalInfoService implements RentalInfoService<String> {
       Movie.Code movieCode = movie.getCode();
       int rentalDays = rental.getDays();
 
-      BiFunction<Integer, BigDecimal, BigDecimal> extendedRentalCalculator = (basePeriodDays, dailyPrice) -> {
-        if (rentalDays > basePeriodDays) {
-          return dailyPrice.multiply(BigDecimal.valueOf(rentalDays - basePeriodDays));
-        }
-        return BigDecimal.ZERO;
-      };
-
       // determine amount for each movie
-      BigDecimal rentalPrice = BigDecimal.ZERO;
-      switch (movieCode) {
-        case REGULAR:
-          BigDecimal basePriceForRegular = new BigDecimal("2.00");
-          BigDecimal extendedPriceForRegular = extendedRentalCalculator.apply(2, new BigDecimal("1.50"));
-          rentalPrice = basePriceForRegular.add(extendedPriceForRegular);
-          break;
-        case NEW:
-          rentalPrice = new BigDecimal("3.00").multiply(new BigDecimal(rentalDays));
-          break;
-        case CHILDREN:
-          BigDecimal basePriceForChildren = new BigDecimal("1.50");
-          BigDecimal extendedPriceForChildren = extendedRentalCalculator.apply(3, new BigDecimal("1.50"));
-          rentalPrice = basePriceForChildren.add(extendedPriceForChildren);
-      }
+      RentalCalculationStrategy calculationStrategy = rentalCalculationStrategyFactory.getRentalCalculationStrategy(movieCode);
+      BigDecimal rentalPrice = calculationStrategy.calculate(rentalDays);
 
       //add frequent bonus points
       frequentEnterPoints++;
       // add bonus for a two day new release rental
-      if (movieCode == Movie.Code.NEW && rentalDays > 2) {
+      if (movieCode == Movie.Code.NEW && rentalDays > NEW_BONUS_PERIOD_DAYS) {
         frequentEnterPoints++;
       }
 
