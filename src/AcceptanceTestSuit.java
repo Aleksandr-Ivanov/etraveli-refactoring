@@ -2,6 +2,7 @@ import domain.Customer;
 import domain.MovieRental;
 import service.RentalInfoService;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -17,9 +18,9 @@ public class AcceptanceTestSuit {
 
   static class SlipItem {
     String film;
-    double price;
+    BigDecimal price;
 
-    public SlipItem(String film, double price) {
+    public SlipItem(String film, BigDecimal price) {
       this.film = film;
       this.price = price;
     }
@@ -38,15 +39,15 @@ public class AcceptanceTestSuit {
         new MovieRental("F002", 1)
     );
     List<SlipItem> slipItems = Arrays.asList(
-        new SlipItem("You've Got Mail", 3.5),
-        new SlipItem("Matrix", 2.0)
+        new SlipItem("You've Got Mail", new BigDecimal("3.50")),
+        new SlipItem("Matrix", new BigDecimal("2.00"))
     );
 
     acceptanceTest(
         "C. U. Stomer",
         rentals,
         slipItems,
-        5.5,
+        new BigDecimal("5.5"),
         2
     );
   }
@@ -56,20 +57,20 @@ public class AcceptanceTestSuit {
         "Helen Kroos",
         Collections.emptyList(),
         Collections.emptyList(),
-        0.0,
+        new BigDecimal("0.00"),
         0
     );
   }
 
   public void singleNewRentalAcceptanceTest() {
     List<MovieRental> rentals = Collections.singletonList(new MovieRental("F004", 5));
-    List<SlipItem> slipItems = Collections.singletonList(new SlipItem("Fast & Furious X", 15.0));
+    List<SlipItem> slipItems = Collections.singletonList(new SlipItem("Fast & Furious X", new BigDecimal("15.00")));
 
     acceptanceTest(
         "Clark Smith",
         rentals,
         slipItems,
-        15.0,
+        new BigDecimal("15.00"),
         2
     );
   }
@@ -81,26 +82,25 @@ public class AcceptanceTestSuit {
         new MovieRental("F004", 2)
     );
     List<SlipItem> slipItems = Arrays.asList(
-        new SlipItem("Matrix", 9.5),
-        new SlipItem("Cars", 3.0),
-        new SlipItem("Fast & Furious X", 6)
+        new SlipItem("Matrix", new BigDecimal("9.50")),
+        new SlipItem("Cars", new BigDecimal("3.00")),
+        new SlipItem("Fast & Furious X", new BigDecimal("6.00"))
     );
 
     acceptanceTest(
         "Mary Claire",
         rentals,
         slipItems,
-        18.5,
+        new BigDecimal("18.5"),
         3
     );
   }
 
-
   void acceptanceTest(String customerName,
-                              List<MovieRental> rentals,
-                              List<SlipItem> slipItems,
-                              double totalAmount,
-                              int frequentPoints) {
+                      List<MovieRental> rentals,
+                      List<SlipItem> slipItems,
+                      BigDecimal totalAmount,
+                      int frequentPoints) {
 
     String resultSlip = rentalInfoService.formStatement(new Customer(customerName, rentals));
 
@@ -118,7 +118,7 @@ public class AcceptanceTestSuit {
 
   private static String formExpectedSlip(String customerName,
                                          List<SlipItem> slipItems,
-                                         double totalAmount,
+                                         BigDecimal totalAmount,
                                          int frequentPoints) {
     String joinedSlipItems = slipItems.stream()
         .map(item -> String.format("\t%s\t%.2f%n", item.film, item.price))

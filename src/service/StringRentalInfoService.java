@@ -5,7 +5,8 @@ import domain.Customer;
 import domain.Movie;
 import domain.MovieRental;
 
-import java.util.function.ToDoubleBiFunction;
+import java.math.BigDecimal;
+import java.util.function.BiFunction;
 
 import static java.lang.System.lineSeparator;
 
@@ -17,36 +18,39 @@ public class StringRentalInfoService implements RentalInfoService<String> {
   }
 
   public String formStatement(Customer customer) {
-    double totalAmount = 0;
+    BigDecimal totalAmount = BigDecimal.ZERO;
     int frequentEnterPoints = 0;
 
-    StatementBuilder resultBuilder = new StatementBuilder();
-    resultBuilder.appendCustomer(customer.getName());
+    StatementBuilder resultBuilder = new StatementBuilder()
+        .appendCustomer(customer.getName());
 
     for (MovieRental rental : customer.getRentals()) {
-      double rentalPrice = 0;
-
       Movie movie = movieDao.get(rental.getMovieId());
       Movie.Code movieCode = movie.getCode();
       int rentalDays = rental.getDays();
 
-      ToDoubleBiFunction<Integer, Double> extendedRentalCalculator = (basePeriodDays, dailyPrice) -> {
+      BiFunction<Integer, BigDecimal, BigDecimal> extendedRentalCalculator = (basePeriodDays, dailyPrice) -> {
         if (rentalDays > basePeriodDays) {
-          return (rentalDays - basePeriodDays) * dailyPrice;
+          return dailyPrice.multiply(BigDecimal.valueOf(rentalDays - basePeriodDays));
         }
-        return 0.0;
+        return BigDecimal.ZERO;
       };
 
       // determine amount for each movie
+      BigDecimal rentalPrice = BigDecimal.ZERO;
       switch (movieCode) {
         case REGULAR:
-          rentalPrice = 2 + extendedRentalCalculator.applyAsDouble(2, 1.5);
+          BigDecimal basePriceForRegular = new BigDecimal("2.00");
+          BigDecimal extendedPriceForRegular = extendedRentalCalculator.apply(2, new BigDecimal("1.50"));
+          rentalPrice = basePriceForRegular.add(extendedPriceForRegular);
           break;
         case NEW:
-          rentalPrice = rentalDays * 3;
+          rentalPrice = new BigDecimal("3.00").multiply(new BigDecimal(rentalDays));
           break;
         case CHILDREN:
-          rentalPrice = 1.5 + extendedRentalCalculator.applyAsDouble(3, 1.5);
+          BigDecimal basePriceForChildren = new BigDecimal("1.50");
+          BigDecimal extendedPriceForChildren = extendedRentalCalculator.apply(3, new BigDecimal("1.50"));
+          rentalPrice = basePriceForChildren.add(extendedPriceForChildren);
       }
 
       //add frequent bonus points
@@ -58,7 +62,7 @@ public class StringRentalInfoService implements RentalInfoService<String> {
 
       //print figures for this rental
       resultBuilder.appendRentalItem(movie.getTitle(), rentalPrice);
-      totalAmount += rentalPrice;
+      totalAmount = totalAmount.add(rentalPrice);
     }
     // add footer lines
     return resultBuilder.appendTotalAmount(totalAmount)
@@ -76,7 +80,7 @@ public class StringRentalInfoService implements RentalInfoService<String> {
       return this;
     }
 
-    StatementBuilder appendRentalItem(String title, double price) {
+    StatementBuilder appendRentalItem(String title, BigDecimal price) {
       stringBuilder.append("\t")
           .append(title)
           .append("\t")
@@ -85,7 +89,7 @@ public class StringRentalInfoService implements RentalInfoService<String> {
       return this;
     }
 
-    StatementBuilder appendTotalAmount(double totalAmount) {
+    StatementBuilder appendTotalAmount(BigDecimal totalAmount) {
       stringBuilder.append("Amount owed is ")
           .append(String.format("%.2f", totalAmount))
           .append(lineSeparator());
