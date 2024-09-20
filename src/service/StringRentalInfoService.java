@@ -8,11 +8,13 @@ import service.calculation.RentalCalculationStrategy;
 import service.calculation.RentalCalculationStrategyFactory;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import static java.lang.System.lineSeparator;
 
 public class StringRentalInfoService implements RentalInfoService<String> {
   public static final int NEW_BONUS_PERIOD_DAYS = 2;
+  public static final int DECIMAL_PRECISION_AFTER_POINT = 2;
 
   private final Dao<String, Movie> movieDao;
   private final RentalCalculationStrategyFactory rentalCalculationStrategyFactory;
@@ -36,7 +38,8 @@ public class StringRentalInfoService implements RentalInfoService<String> {
 
       // determine amount for each movie
       RentalCalculationStrategy calculationStrategy = rentalCalculationStrategyFactory.getRentalCalculationStrategy(movieCode);
-      BigDecimal rentalPrice = calculationStrategy.calculate(rentalDays);
+      BigDecimal rentalPrice = calculationStrategy.calculate(rentalDays)
+          .setScale(DECIMAL_PRECISION_AFTER_POINT, RoundingMode.HALF_EVEN);
 
       //add frequent bonus points
       frequentEnterPoints++;
@@ -49,6 +52,8 @@ public class StringRentalInfoService implements RentalInfoService<String> {
       resultBuilder.appendRentalItem(movie.getTitle(), rentalPrice);
       totalAmount = totalAmount.add(rentalPrice);
     }
+    totalAmount = totalAmount
+        .setScale(DECIMAL_PRECISION_AFTER_POINT, RoundingMode.HALF_EVEN);
     // add footer lines
     return resultBuilder.appendTotalAmount(totalAmount)
         .appendFrequentEnterPoints(frequentEnterPoints)
