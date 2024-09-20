@@ -1,5 +1,6 @@
 package domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Customer {
@@ -8,7 +9,7 @@ public class Customer {
 
   public Customer(String name, List<MovieRental> rentals) {
     this.name = name;
-    this.rentals = rentals;
+    this.rentals = new ArrayList<>(rentals);
   }
 
   public String getName() {

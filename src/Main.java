@@ -17,6 +17,9 @@ public class Main {
     AcceptanceTestSuit acceptanceTestSuit = new AcceptanceTestSuit(rentalInfoService);
     acceptanceTestSuit.runTests();
 
+    UnitTestSuit unitTestSuit = new UnitTestSuit();
+    unitTestSuit.runTests();
+
     System.out.println("Success");
   }
 }
