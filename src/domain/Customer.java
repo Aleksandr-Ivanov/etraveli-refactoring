@@ -1,6 +1,7 @@
 package domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Customer {
@@ -17,6 +18,6 @@ public class Customer {
   }
 
   public List<MovieRental> getRentals() {
-    return rentals;
+    return Collections.unmodifiableList(rentals);
   }
 }
