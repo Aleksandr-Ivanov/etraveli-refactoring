@@ -27,6 +27,24 @@ Combined to speed up testing:
 ./compile.sh && ./run.sh
 ```
 
+**Manual installation in case of necessity:**
+
+- To clean-up compilation folder:
+```
+rm -rf compiled/
+```
+
+
+- To compile:
+```
+javac src/dao/*.java src/domain/*.java src/service/*.java src/service/calculation/*.java src/*.java -d compiled/ -source 8 -target 8
+```
+
+- To run:
+```
+java -cp compiled/ Main
+```
+
 Possible necessary steps:
 
 - Make scripts executable:

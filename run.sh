@@ -1,2 +1,2 @@
 #!/bin/bash
-java -cp compiled Main
+java -cp compiled/ Main
