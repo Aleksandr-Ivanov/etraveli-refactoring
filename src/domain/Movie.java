@@ -36,7 +36,7 @@ public class Movie {
       return false;
     }
     Movie movie = (Movie) o;
-    return id == movie.id;
+    return Objects.equals(id, movie.id);
   }
 
   @Override
