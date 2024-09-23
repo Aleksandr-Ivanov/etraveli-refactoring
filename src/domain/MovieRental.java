@@ -42,4 +42,13 @@ public class MovieRental {
   public int hashCode() {
     return Objects.hashCode(id);
   }
+
+  @Override
+  public String toString() {
+    return "MovieRental{" +
+        "id=" + id +
+        ", movieId='" + movieId + '\'' +
+        ", days=" + days +
+        '}';
+  }
 }
