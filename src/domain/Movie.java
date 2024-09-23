@@ -1,17 +1,16 @@
 package domain;
 
 import java.util.Objects;
-import java.util.Random;
 
 public class Movie {
   public enum Code {REGULAR, NEW, CHILDREN}
 
-  private int id;
+  private String id;
   private String title;
   private Code code;
 
-  public Movie(String title, Code code) {
-    this.id = new Random().nextInt(Integer.MAX_VALUE);
+  public Movie(String id, String title, Code code) {
+    this.id = id;
     this.title = title;
     this.code = code;
   }
@@ -24,7 +23,7 @@ public class Movie {
     return code;
   }
 
-  public int getId() {
+  public String getId() {
     return id;
   }
 
